@@ -1,0 +1,16 @@
+*.swp
+*.swo
+__pycache__
+*.pyc
+.python-version
+test
+save/*
+test.py
+*.log
+*.txt
+*.csv
+*.bin
+data/*
+ptb_data/*
+birnn-test/*
+birnn-train/*
