@@ -4,7 +4,13 @@ import numpy as np
 import random
 import tensorflow as tf
 import os
+from settings import *
 dirname = os.path.dirname(os.path.abspath(__file__))
+if args.cut:
+  cut_mode = args.cut
+if args.m:
+  mapping_path = args.m
+model_type = args.model_type
 
 class discriminator():
 
@@ -30,10 +36,10 @@ class discriminator():
     self.filter_sizes = [3,4]
     self.num_filters = 128 
 
-    self.build_model()
+    self.build_model(typ=model_type)
     self.saver = tf.train.Saver(max_to_keep = 2)
 
-  def build_model(self,typ='cnn'):
+  def build_model(self,typ):
     self.model_type[typ]()
 
   def build_model_cnn(self):
@@ -116,7 +122,7 @@ class discriminator():
       self.opt = tf.train.AdamOptimizer().minimize(self.loss)
     else:
       #self.vocab_map, _ = dataset.read_map('sentiment_analysis/corpus/mapping')
-      self.vocab_map, _ = dataset.read_map(os.path.join(dirname,'corpus/mapping'))
+      self.vocab_map, _ = dataset.read_map(mapping_path)
 
   def step(self, session, encoder_inputs, seq_length, target = None):
     input_feed = {}
@@ -165,7 +171,10 @@ class discriminator():
         encoder_inputs.append(pair[1][:self.max_length])
         encoder_length.append(self.max_length)
       else:
-        encoder_pad = [dataset.PAD_ID] * (self.max_length - length)
+        if cut_mode == "char":
+          encoder_pad = [dataset.PAD_ID] * (self.max_length - length)
+        if cut_mode == "word":
+          encoder_pad = [dataset.EOS_ID] * (self.max_length - length)
         encoder_inputs.append(pair[1] + encoder_pad)
         encoder_length.append(length)
 

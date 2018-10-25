@@ -8,8 +8,13 @@ import dataset
 import model
 from settings import *
 
-def sentence_cutter(sentence):
-    sentence = [s for s in sentence]
+def sentence_cutter(sentence,mode="char",jieba=None):
+    if mode == "word":
+      sentence = jieba.lcut(sentence)
+    elif mode == "char":
+      sentence = [s for s in sentence]
+    elif mode == "nochange":
+      return sentence
     return (' ').join(sentence)
 
 def create_model(session, mode, model_dir=model_dir):
@@ -78,7 +83,10 @@ def train(file_path=file_path, token_path=token_path, mapping_path=mapping_path)
        print("Model Saved!")
        loss = 0
 
-def evaluate(mapping_path=mapping_path):
+def evaluate(mapping_path=mapping_path, cut_mode="word"):
+  if cut_mode == "word":
+      import jieba_fast as jieba
+      jieba.load_userdict(args.jieba_dict)
   vocab_map, _ = dataset.read_map(mapping_path)
   sess = tf.Session()
   Model = create_model(sess, 'test')
@@ -87,7 +95,7 @@ def evaluate(mapping_path=mapping_path):
   sys.stdout.write('>')
   sys.stdout.flush()
   sentence = sys.stdin.readline()
-  sentence = sentence_cutter(sentence)
+  sentence = sentence_cutter(sentence,cut_mode,jieba)
 
   while(sentence):
     print('sentence: ',sentence)
@@ -101,16 +109,13 @@ def evaluate(mapping_path=mapping_path):
     print('>', end = '')
     sys.stdout.flush()
     sentence = sys.stdin.readline()
-    sentence = sentence_cutter(sentence)
+    sentence = sentence_cutter(sentence,cut_mode)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--file_path", default=None, dest="f" ,help="file path")
-    parser.add_argument("--token_path", default=None, dest="t" ,help="token path")
-    parser.add_argument("--mapping_path", default=None, dest="m" ,help="mapping path")
-    args = parser.parse_args()
     if args.file_path: file_path = args.file_path
     if args.token_path: token_path = args.token_path
     if args.mapping_path: mapping_path = args.mapping_path
-    #train(file_path, token_path, mapping_path)
-    evaluate(mapping_path)
+    if args.sentence_cut_mode: 
+      cut_mode = args.sentence_cut_mode
+    train(file_path, token_path, mapping_path)
+    #evaluate(mapping_path,cut_mode)
