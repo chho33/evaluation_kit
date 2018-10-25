@@ -153,7 +153,10 @@ class discriminator():
       if shuffle:
           pair = random.choice(data)
       else:
-          pair = data[i]
+          try:
+              pair = data[i]
+          except IndexError:
+              break
           #print('pair: ',pair)
       #pair = data[i]
       length = len(pair[1])

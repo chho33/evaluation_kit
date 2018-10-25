@@ -12,7 +12,7 @@ def sentence_cutter(sentence):
     sentence = [s for s in sentence]
     return (' ').join(sentence)
 
-def create_model(session, mode):
+def create_model(session, mode, model_dir=model_dir):
   m = model.discriminator(VOCAB_SIZE,
                           UNIT_SIZE,
                           BATCH_SIZE,

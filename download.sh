@@ -3,11 +3,17 @@
 # make needed dirs
 ./make_dirs.sh
 
-# download data needed
+# download data and models
 data_path="data/"
+model_path="saved_model/"
 dict_fasttext=$data_path"dict_fasttext.txt.gz","1jk6pjs535ujn4SQkK5GTwy_LWaLbyMto"
 sentiment_mapping=$data_path"mapping","1Jl8TURNKydbgw01QuAljOEX4tsHjAcjP"
 lm_mapping=$data_path"words_char.json.gz","1iMD5KAgH4Ro8JqLo_V3XCGLGwz9nsTaw"
+#coh1=$model_path"/coh1/coh2_20181021.tar.gz","1rJUDPJ8nng-vKUNuaSbSGlz1Ye05qOj4"
+coh2_model=$model_path"/coh2/coh2.tar.gz","1rJUDPJ8nng-vKUNuaSbSGlz1Ye05qOj4"
+lm_model=$model_path"LM/LM.tar.gz","16vZJvf5_NqFabcKITOjyVYeAKfryb6Ei"
+sent_model=$model_path"sentiment_analysis/sentiment.zip","1oA9WuYa-jHCimMYRElC7qVuOggrBdaE9"
+
 
 files_arr=($dict_fasttext $sentiment_mapping $lm_mapping)
 for f in ${files_arr[@]}; do
@@ -21,9 +27,9 @@ for f in ${files_arr[@]}; do
         gunzip ${filename}
     elif [[ ${filename} = *".tar.bz"* ]]; then
         tar jxvf ${filename}
-        rm ${filename}
+        rm ${filename} --strip 1
     elif [[ ${filename} = *".tar.gz"* ]]; then
-        tar zxvf ${filename}
+        tar zxvf ${filename} --strip 1
         rm ${filename}
     fi
 done
