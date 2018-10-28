@@ -11,13 +11,13 @@ sentiment_word_mapping=$data_path"word_mapping","1lqdsfeBRgc4YHO3go4txu9OKXa7cvj
 lm_mapping=$data_path"words_char.json.gz","1iMD5KAgH4Ro8JqLo_V3XCGLGwz9nsTaw"
 
 model_path="saved_model/"
-#coh1_model=$model_path"/coh1/coh1.tar.gz","1rJUDPJ8nng-vKUNuaSbSGlz1Ye05qOj4"
+coh1_model=$model_path"/coh1/coh1.tar.gz","1FkVBItYo4ra9B-yF76o3h3WCQ9lLSs7p"
 coh2_model=$model_path"coh2/coh2.tar.gz","1rJUDPJ8nng-vKUNuaSbSGlz1Ye05qOj4"
 lm_model=$model_path"LM/LM.tar.gz","16vZJvf5_NqFabcKITOjyVYeAKfryb6Ei"
 sent_model=$model_path"sentiment_analysis/sentiment.zip","1oA9WuYa-jHCimMYRElC7qVuOggrBdaE9"
 
 
-files_arr=($dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh2_model $lm_model $sent_model)
+files_arr=($dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh1_model $coh2_model $lm_model $sent_model)
 for f in ${files_arr[@]}; do
     IFS=',' read filename fileid <<< "${f}"
     curl -L -o "${filename}" "https://drive.google.com/uc?export=download&id=${fileid}"
