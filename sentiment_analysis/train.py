@@ -1,121 +1,173 @@
-import tensorflow as tf
-from tensorflow.python.platform import gfile
-import random
-import os
-import sys
+'''
+Author: Zeping Yu
+Sliced Recurrent Neural Network (SRNN). 
+SRNN is able to get much faster speed than standard RNN by slicing the sequences into many subsequences.
+This work is accepted by COLING 2018.
+The code is written in keras, using tensorflow backend. We implement the SRNN(8,2) here, and Yelp 2013 dataset is used.
+If you have any question, please contact me at zepingyu@foxmail.com.
+'''
+
+import pandas as pd
 import numpy as np
-import dataset
-import model
-from settings import *
+import pickle
 
-def sentence_cutter(sentence,mode="char",jieba=None):
-    if mode == "word":
-      sentence = jieba.lcut(sentence)
-    elif mode == "char":
-      sentence = [s for s in sentence]
-    elif mode == "nochange":
-      return sentence
-    return (' ').join(sentence)
+from keras.constraints import max_norm
+from keras.utils.np_utils import to_categorical
+#from keras.preprocessing.text import Tokenizer, text_to_word_sequence
+#from keras.preprocessing.sequence import pad_sequences
+from keras.models import Model
+from keras.layers import Input, Embedding, GRU, TimeDistributed, Dense
 
-def create_model(session, mode, model_dir=model_dir):
-  m = model.discriminator(VOCAB_SIZE,
-                          UNIT_SIZE,
-                          BATCH_SIZE,
-                          MAX_LENGTH,
-                          mode)
-  ckpt = tf.train.get_checkpoint_state(model_dir)
-  print('ckpt: ',ckpt)
+from utils import *
 
-  if ckpt:
-    print("Reading model from %s" % ckpt.model_checkpoint_path)
-    m.saver.restore(session, ckpt.model_checkpoint_path)
-  else:
-    print("Create model with fresh parameters")
-    session.run(tf.global_variables_initializer())
+#set hyper parameters
+MAX_NUM_WORDS = 13919 
+EMBEDDING_DIM = 300
+VALIDATION_SPLIT = 0.001
+TEST_SPLIT=0.001
+NUM_FILTERS = 100
+#SPLIT_DIMS = [5,5,3]
+#MAX_LEN = 75 
+SPLIT_DIMS = [6,6,8]
+MAX_LEN = SPLIT_DIMS[0]*SPLIT_DIMS[1]*SPLIT_DIMS[2] 
+Batch_size = 128
+EPOCHS = 10
+#NUM_CLASSES = 2
+layer_norm = False 
+lr = 0.001
+decay = 0.00005
+corpus = "0.7_clean.csv" 
+model_name = "Model07"
+history_name = "Hoistory07"
+#corpus = "/data/corpus/ptt_xhj.csv" 
+#model_name = "Model_ptt_xhj"
+#history_name = "Hoistory_ptt_xhj"
 
-  return m
+#load data
+df = pd.read_csv(corpus)
+#df = df.sample(1000)
 
-def train(file_path=file_path, token_path=token_path, mapping_path=mapping_path):
-   if gfile.Exists(mapping_path) and gfile.Exists(token_path):
-     print('Files have already been formed!')
-   else:
-     dataset.form_vocab_mapping(50000)
-     vocab_map, _ = dataset.read_map(mapping_path)
-     dataset.file_to_token(file_path, vocab_map)
+Y = df.score.values
+#Y = to_categorical(Y,num_classes=NUM_CLASSES)
+X = df.text.values
 
-   d = dataset.read_data(token_path)
-   random.seed(SEED)
-   random.shuffle(d)    
-   
-   train_set = d[:int(0.9 * len(d))]
-   valid_set = d[int(-0.1 * len(d)):]
+#shuffle the data
+indices = np.arange(X.shape[0])
+np.random.seed(2018)
+np.random.shuffle(indices)
+X=X[indices]
+Y=Y[indices]
 
-   sess = tf.Session()
+#training set, validation set and testing set
+nb_validation_samples_val = int((VALIDATION_SPLIT + TEST_SPLIT) * X.shape[0])
+nb_validation_samples_test = int(TEST_SPLIT * X.shape[0])
 
-   Model = create_model(sess, 'train')
-   #Model = create_model(sess, 'valid')
-   step = 0
-   loss = 0
+x_train = X[:-nb_validation_samples_val]
+y_train = Y[:-nb_validation_samples_val]
+x_val =  X[-nb_validation_samples_val:-nb_validation_samples_test]
+y_val =  Y[-nb_validation_samples_val:-nb_validation_samples_test]
+x_test = X[-nb_validation_samples_test:]
+y_test = Y[-nb_validation_samples_test:]
 
-   while(True):
-     step += 1
-     encoder_input, encoder_length, target = Model.get_batch(train_set)
-     '''
-     print(encoder_input)
-     print(encoder_length)
-     print(target)
-     exit()
-     '''
-     loss_train = Model.step(sess, encoder_input, encoder_length, target)
-     loss += loss_train/CHECK_STEP
-     if step % CHECK_STEP == 0:
-       Model.mode = 'valid'
-       temp_loss = 0
-       for _ in range(100):
-         encoder_input, encoder_length, target = Model.get_batch(valid_set)
-         loss_valid = Model.step(sess, encoder_input, encoder_length, target)
-         temp_loss += loss_valid/100.
-       Model.mode = 'train'
-       print("Train Loss: %s" % loss)
-       print("Valid Loss: %s" % temp_loss)
-       checkpoint_path = os.path.join(model_dir, 'dis.ckpt')
-       Model.saver.save(sess, checkpoint_path, global_step = step)
-       print("Model Saved!")
-       loss = 0
+x_train_word_ids = texts_to_sequences(x_train)
+x_test_word_ids = texts_to_sequences(x_test)
+x_val_word_ids = texts_to_sequences(x_val)
 
-def evaluate(mapping_path=mapping_path, cut_mode="word"):
-  if cut_mode == "word":
-      import jieba_fast as jieba
-      jieba.load_userdict(args.jieba_dict)
-  vocab_map, _ = dataset.read_map(mapping_path)
-  sess = tf.Session()
-  Model = create_model(sess, 'test')
-  Model.batch_size = 1
-  
-  sys.stdout.write('>')
-  sys.stdout.flush()
-  sentence = sys.stdin.readline()
-  sentence = sentence_cutter(sentence,cut_mode,jieba)
+#pad sequences into the same length
+x_train_padded_seqs = pad_sequences(x_train_word_ids, maxlen=MAX_LEN)
+x_test_padded_seqs = pad_sequences(x_test_word_ids, maxlen=MAX_LEN)
+x_val_padded_seqs = pad_sequences(x_val_word_ids, maxlen=MAX_LEN)
 
-  while(sentence):
-    print('sentence: ',sentence)
-    token_ids = dataset.convert_to_token(sentence, vocab_map)
-    print('toekn_ids: ',token_ids)
-    encoder_input, encoder_length, _ = Model.get_batch([(0, token_ids)]) 
-    print('encoder_input: ',encoder_input, encoder_input.shape)
-    print('encoder_length: ',encoder_length)
-    score = Model.step(sess, encoder_input, encoder_length)
-    print('Score: ' , score[0][0])
-    print('>', end = '')
-    sys.stdout.flush()
-    sentence = sys.stdin.readline()
-    sentence = sentence_cutter(sentence,cut_mode)
+#slice sequences into many subsequences
+x_test_padded_seqs_split = get_split_list(x_test_padded_seqs,SPLIT_DIMS)
+x_val_padded_seqs_split = get_split_list(x_val_padded_seqs,SPLIT_DIMS)
+x_train_padded_seqs_split = get_split_list(x_train_padded_seqs,SPLIT_DIMS)
 
-if __name__ == '__main__':
-    if args.file_path: file_path = args.file_path
-    if args.token_path: token_path = args.token_path
-    if args.mapping_path: mapping_path = args.mapping_path
-    if args.sentence_cut_mode: 
-      cut_mode = args.sentence_cut_mode
-    train(file_path, token_path, mapping_path)
-    #evaluate(mapping_path,cut_mode)
+'''
+#load pre-trained Fasttext word embeddings
+print ("Using Fasttext embeddings")
+fasttext_path = '.txt'
+embeddings_index = {}
+with open(fasttext_path) as f:
+    for line in f:
+        values = line.split()
+        word = values[0]
+        coefs = np.asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
+print('Found %s word vectors.' % len(embeddings_index))
+
+#use pre-trained GloVe word embeddings to initialize the embedding layer
+embedding_matrix = np.random.random((MAX_NUM_WORDS + 1, EMBEDDING_DIM))
+for word, i in vocab_dict.items():
+    if i<MAX_NUM_WORDS:
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None:
+        # words not found in embedding index will be random initialized.
+            embedding_matrix[i] = embedding_vector
+'''
+            
+embedding_layer = Embedding(MAX_NUM_WORDS,
+                            EMBEDDING_DIM,
+                            #weights=[embedding_matrix],
+                            input_length=SPLIT_DIMS[0],
+                            trainable=True)
+
+#build model
+print ("Build Model")
+input1 = Input(shape=(SPLIT_DIMS[0],), dtype='int32')
+embed = embedding_layer(input1)
+if layer_norm:
+    gru1 = GRU(NUM_FILTERS,recurrent_activation='sigmoid',activation=None,return_sequences=False,kernel_constraint=max_norm(1.))(embed)
+else:
+    gru1 = GRU(NUM_FILTERS,recurrent_activation='sigmoid',activation=None,return_sequences=False)(embed)
+Encoder1 = Model(input1, gru1)
+
+input2 = Input(shape=(SPLIT_DIMS[1],SPLIT_DIMS[0],), dtype='int32')
+embed2 = TimeDistributed(Encoder1)(input2)
+if layer_norm:
+    gru2 = GRU(NUM_FILTERS,recurrent_activation='sigmoid',activation=None,return_sequences=False)(embed2)
+else:
+    gru2 = GRU(NUM_FILTERS,recurrent_activation='sigmoid',activation=None,return_sequences=False,kernel_constraint=max_norm(1.))(embed2)
+Encoder2 = Model(input2,gru2)
+
+input3 = Input(shape=(SPLIT_DIMS[2],SPLIT_DIMS[1],SPLIT_DIMS[0]), dtype='int32')
+embed3 = TimeDistributed(Encoder2)(input3)
+if layer_norm:
+    gru3 = GRU(NUM_FILTERS,recurrent_activation='sigmoid',activation=None,return_sequences=False)(embed3)
+else:
+    gru3 = GRU(NUM_FILTERS,recurrent_activation='sigmoid',activation=None,return_sequences=False,kernel_constraint=max_norm(1.))(embed3)
+#preds = Dense(NUM_CLASSES, activation='sigmoid')(gru3)
+preds = Dense(1, activation='sigmoid')(gru3)
+model = Model(input3, preds)
+
+print (Encoder1.summary())
+print (Encoder2.summary())
+print (model.summary())
+
+#use adam optimizer
+from keras.optimizers import Adam
+opt = Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=decay)
+
+model.compile(loss='binary_crossentropy',
+              optimizer=opt,
+              metrics=['acc'])
+
+#save the best model on validation set
+from keras.callbacks import ModelCheckpoint             
+savebestmodel = 'save_model/%s'%model_name
+checkpoint = ModelCheckpoint(savebestmodel, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+callbacks=[checkpoint] 
+history = model.fit(np.array(x_train_padded_seqs_split), y_train, 
+          validation_data = (np.array(x_val_padded_seqs_split), y_val),
+          nb_epoch = EPOCHS, 
+          batch_size = Batch_size,
+          callbacks = callbacks,
+          verbose = 1)
+
+with open('save_model/%s'%history_name, 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
+
+#use the best model to evaluate on test set
+from keras.models import load_model
+best_model= load_model(savebestmodel)          
+print (best_model.evaluate(np.array(x_test_padded_seqs_split),y_test,batch_size=Batch_size))
