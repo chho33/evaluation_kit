@@ -15,7 +15,7 @@ coh1_model=$model_path"/coh1/coh1.tar.gz","1FkVBItYo4ra9B-yF76o3h3WCQ9lLSs7p"
 coh2_model=$model_path"coh2/coh2.tar.gz","1rJUDPJ8nng-vKUNuaSbSGlz1Ye05qOj4"
 lm_model=$model_path"LM/LM.tar.gz","16vZJvf5_NqFabcKITOjyVYeAKfryb6Ei"
 sent_word_model=$model_path"sentiment_analysis/sentiment_word.zip","1oA9WuYa-jHCimMYRElC7qVuOggrBdaE9"
-sent_char_model=$model_path"sentiment_analysis/sentiment_char.zip","1TqLDuN2YO9ddJH5HDaY1oVk3xl__CdlN"
+sent_char_model=$model_path"sentiment_analysis/sentiment_char.zip","112GPe7_tIoqKQwcgiXBgh6FeFPn7-ZK8"
 
 
 files_arr=($dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh1_model $coh2_model $lm_model $sent_word_model $sent_char_model)
