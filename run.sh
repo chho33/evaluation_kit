@@ -1,6 +1,10 @@
 #!/bin/bash
 
-data_path=$PWD/data/test_raw.csv
+if [ -z "$1" ]; then
+    data_path=$PWD/data/test_raw.csv
+else
+    data_path=$1
+fi
 log_path=$PWD/logs/`date +%s`".log"
 model_base_path=$PWD/saved_models
 lm_model_path=$model_base_path/LM
