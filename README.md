@@ -1,7 +1,7 @@
 ## Pre Request (execute first to download and install dependencies):
 - python version: 3.6 up
-- pip install -r requirements.txt
-- install fasttext package for python
+- execute `pip install -r requirements.txt`
+- install fasttext package for python (as illustrated below)
 ```
 $ git clone https://github.com/facebookresearch/fastText.git
 $ cd fastText
