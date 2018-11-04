@@ -21,7 +21,8 @@ sent_word_model=$model_path"sentiment_analysis/sentiment_word.zip","1oA9WuYa-jHC
 sent_char_model=$model_path"sentiment_analysis/sentiment_char.tar.gz","112GPe7_tIoqKQwcgiXBgh6FeFPn7-ZK8"
 
 
-files_arr=($coh1_source_mapping $coh1_target_mapping $fasttext_npy $dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh1_model $coh2_model $lm_model $sent_word_model $sent_char_model)
+#files_arr=($coh1_source_mapping $coh1_target_mapping $fasttext_npy $dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh1_model $coh2_model $lm_model $sent_word_model $sent_char_model)
+files_arr=($coh1_source_mapping $coh1_target_mapping $dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh2_model $sent_word_model $sent_char_model)
 for f in ${files_arr[@]}; do
     IFS=',' read filename fileid <<< "${f}"
     download_url="https://drive.google.com/uc?id=${fileid}&export=download"
