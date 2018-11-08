@@ -1,4 +1,4 @@
-## Pre Request (execute first to download and install dependencies):
+## Pre-Request (execute first to download and install dependencies):
 - python version: 3.6 up
 - execute `pip install -r requirements.txt`
 - install fasttext package for python (as illustrated below)
@@ -22,7 +22,7 @@ tar zxf LM.tar.gz --strip 1;
 ```
 > [fasttext_vectors](https://drive.google.com/open?id=1p3ZpcBeZcpIjMmbx3aD0QWEks-TtrPSP)
 ```
-mv LM.tar.gz evaluation_kit/data;
+mv fasttext.npy.zip evaluation_kit/data;
 cd evaluation_kit/data;
 unzip fasttext.npy.zip;
 ```
