@@ -26,7 +26,7 @@ mv fasttext.npy.zip evaluation_kit/data;
 cd evaluation_kit/data;
 unzip fasttext.npy.zip;
 ```
-- execute `./download`
+- execute `./download.sh`
 
 ## Usage:
 - `./run.sh [-d=$data_path|--data_path=$data_path] [-l=$log_path|--log_path=$log_path]` (default of $data_path: ./data/test_raw.csv; default of $log_path: ./logs/\`date +%s\`.log )
