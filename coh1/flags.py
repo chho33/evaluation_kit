@@ -1,6 +1,7 @@
 import tensorflow as tf
 import os
 import json
+import numpy as np
 dirname = os.path.dirname(os.path.abspath(__file__))
 
 # ptt only
@@ -20,9 +21,6 @@ fasttext_npy = '%sfasttext.npy'%corpus_dir
 if not os.path.exists(model_dir):
     print('create model dir: ',model_dir)
     os.mkdir(model_dir)
-if not os.path.exists(model_RL_dir):
-    print('create model RL dir: ',model_RL_dir)
-    os.mkdir(model_RL_dir)
 if not os.path.exists(corpus_dir):
     print('create corpus dir: ',corpus_dir)
     os.mkdir(corpus_dir)

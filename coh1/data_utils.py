@@ -4,7 +4,7 @@ from __future__ import division
 import re
 import sys
 #import nltk
-from flags import buckets,split_ratio,SEED,replace_words,src_vocab_size,_START_VOCAB,SPECIAL_TAGS_COUNT,PAD_ID,GO_ID,EOS_ID,UNK_ID,dict_path
+from flags import buckets,split_ratio,SEED,src_vocab_size,_START_VOCAB,SPECIAL_TAGS_COUNT,PAD_ID,GO_ID,EOS_ID,UNK_ID,dict_path
 import jieba_fast as jieba
 import opencc
 import numpy as np
