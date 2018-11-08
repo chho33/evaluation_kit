@@ -1,11 +1,47 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-    data_path=$PWD/data/test_raw.csv
-else
-    data_path=$1
-fi
+# default
 log_path=$PWD/logs/`date +%s`".log"
+data_path=$PWD/data/test_raw.csv
+
+#while getopts d:l: option
+#do
+#case "${option}"
+#in
+#d) DATA=${OPTARG};;
+#l) LOG=${OPTARG};;
+#esac
+#done
+
+for i in "$@"
+do
+case $i in
+    -d=*|--data_path=*)
+    DATA="${i#*=}"
+    shift # past argument=value
+    ;;
+    -l=*|--log_path=*)
+    LOG="${i#*=}"
+    shift # past argument=value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
+#if [ -n "$1" ]; then
+#    data_path=$1
+#fi
+
+if [ -n "$DATA" ]; then
+    data_path=$DATA
+fi
+
+if [ -n "$LOG" ]; then
+    log_path=$LOG
+fi
+
 model_base_path=$PWD/saved_models
 lm_model_path=$model_base_path/LM
 coh1_model_path=$model_base_path/coh1

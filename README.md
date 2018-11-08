@@ -29,6 +29,7 @@ unzip fasttext.npy.zip;
 - execute `./download`
 
 ## Usage:
-- `./run.sh [$filename]` (if filename is not assigned, ./data/test_raw.csv will be the default file to be used.)
+- `./run.sh [-d=$data_path|--data_path=$data_path] [-l=$log_path|--log_path=$log_path]` (default of $data_path: ./data/test_raw.csv; default of $log_path: ./logs/\`date +%s\`.log )
+- example: run.sh -d=data/result.csv -l=logs/result.log
 ##### Reminder: the format of test_raw.csv must contain at least "utterance" column.
 ##### after ./run.sh executed, the log will dump in ./logs directory.
