@@ -8,6 +8,8 @@ FLAGS = tf.flags.FLAGS
 tf.app.flags.DEFINE_string('inference_data_path', 'data/test_raw.csv', 'inference data path')
 # log performance
 tf.app.flags.DEFINE_string('log_path', None, 'inference score log path')
+# model path
+tf.flags.DEFINE_string("model_dir","save/20181021", "Directory to store model checkpoints (defaults to ./runs)")
 
 # Data path
 tf.flags.DEFINE_string("input_dir", os.path.join(dirname,"data"), "Directory containing input data files 'train.tfrecords' and 'validation.tfrecords'")
@@ -42,7 +44,6 @@ tf.flags.DEFINE_integer("batch_size", 64, "Batch size during training")
 tf.flags.DEFINE_string("optimizer", "Adam", "Optimizer Name (Adam, Adagrad, etc)")
 
 # Training Config
-tf.flags.DEFINE_string("model_dir","save/20181021", "Directory to store model checkpoints (defaults to ./runs)")
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
 tf.flags.DEFINE_integer("num_epochs", 25, "Number of training Epochs. Defaults to indefinite.")
 tf.flags.DEFINE_integer("eval_every", 2000, "Evaluate after this many train steps")
@@ -53,3 +54,4 @@ tf.flags.DEFINE_integer("save_checkpoints_steps", 300, "save_checkpoints_steps")
 MAX_LEN = 20
 print(FLAGS.log_path)
 print(FLAGS.inference_data_path)
+print(FLAGS.model_dir)
