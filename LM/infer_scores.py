@@ -93,6 +93,7 @@ if __name__ == "__main__":
 
     # file not yet transformed to one hot
     data = pd.read_csv(args.inference_data_path) 
+    data = data.fillna('')
     data = list(data["utterance"])
     data = map_get_words(data)
     data = list(build_dataset(data,word_dict,True))

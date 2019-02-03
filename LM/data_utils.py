@@ -100,6 +100,11 @@ def map_get_words(txts,kind="char",return_type="str"):
     return txts  
 
 def get_words(txt,kind="char",return_type="str",jieba=None):
+    if not isinstance(txt,str) and np.isnan(txt):
+        result = []
+        if return_type == "str":
+            result = ' '.join(result)
+        return result
     if kind == "word":
         result = jieba.lcut(txt)[:max_document_len]
         #result = list(filter(lambda x:len(x.strip())>0,result))

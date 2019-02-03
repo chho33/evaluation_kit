@@ -61,6 +61,7 @@ def test(filename):
   #sources = ["你是誰","你是誰"]
   #targets = ["你是不是想人家","我是說你是我老婆"]
   df = pd.read_csv(filename)
+  df = df.fillna('')
   sources = list(df["context"])
   targets = list(df["utterance"])
   scores = []

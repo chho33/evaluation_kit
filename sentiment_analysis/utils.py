@@ -5,6 +5,7 @@ GO_ID = 0
 EOS_ID = 1
 UNK_ID = 2
 SPLIT_DIMS = [5,5,3]
+#SPLIT_DIMS = [6,6,8]
 MAX_LEN = SPLIT_DIMS[0]*SPLIT_DIMS[1]*SPLIT_DIMS[2]
 batch_size = 128
 

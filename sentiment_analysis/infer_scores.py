@@ -5,6 +5,7 @@ from utils import *
 
 def inference(infer_data_path,model_dir,cut_mode="char"):
     df = pd.read_csv(infer_data_path)
+    df = df.fillna('')
     x_test = df.utterance.values
     x_test_word_ids = texts_to_sequences(x_test)
     x_test_padded_seqs = pad_sequences(x_test_word_ids, maxlen=MAX_LEN)
