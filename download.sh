@@ -46,7 +46,7 @@ done
 
 # download fasttext model
 filename=$data_path"cc.zh.300.bin.gz"
-wget -O $filename https://s3-us-west-1.amazonaws.com/fasttext-vectors/word-vectors-v2/cc.zh.300.bin.gz
+wget -O $filename https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.zh.300.bin.gz
 gunzip $filename
 
 # build soft link
