@@ -6,13 +6,16 @@ import sys
 #import nltk
 from flags import buckets,split_ratio,SEED,src_vocab_size,_START_VOCAB,SPECIAL_TAGS_COUNT,PAD_ID,GO_ID,EOS_ID,UNK_ID,dict_path
 import jieba_fast as jieba
-import opencc
+from opencc import OpenCC
 import numpy as np
 
 import tensorflow as tf
 from tensorflow.python.platform import gfile
 
 import subprocess
+
+cc_t2s = OpenCC('t2s')
+cc_s2t = OpenCC('s2t')
 
 WORD_SPLIT = re.compile(b"([.,!?\"':;)(])")
 #WORD_SPLIT = re.compile(b"")
@@ -268,12 +271,6 @@ def split_train_val(source,target,buckets=buckets):
                     src_val.write(s)
                     trg_val.write(t)
 
-def simple2tradition(text):
-    return opencc.convert(text, config='zhs2zht.ini')
-
-def tradition2simple(text):
-    return opencc.convert(text,config='zht2zhs.ini')
-
 def load_fasttext_vec(model_path,mapping,hkl_file,t2s=False):
     import hickle as hkl
     from fastText import load_model
@@ -283,7 +280,7 @@ def load_fasttext_vec(model_path,mapping,hkl_file,t2s=False):
         for row in f.readlines():
             row = row.strip()
             if t2s:
-                row = tradition2simple(row)
+                row = cc_t2s.convert(row)
             vec = model.get_word_vector(row)
             text.append(vec)
     text = np.array(text)

@@ -14,7 +14,7 @@ done
 
 # coh1
 base_dir="coh1"
-dirs=("corpus" "model")
+dirs=("data" "model")
 for d in ${dirs[@]}; do
     target_dir=$base_dir/$d
     if [[ -d $target_dir ]] ; 
@@ -56,7 +56,7 @@ done
 
 # sentiment 
 base_dir="sentiment_analysis"
-dirs=("corpus" "save")
+dirs=("data" "save")
 for d in ${dirs[@]}; do
     target_dir=$base_dir/$d
     if [[ -d $target_dir ]] ; 

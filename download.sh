@@ -33,14 +33,14 @@ for f in ${files_arr[@]}; do
     if [[ ${filename} = *"zip"* ]]; then
         unzip ${filename}
         rm ${filename}
-    elif [[ ${filename} = *"gz"* ]]; then
-        gunzip ${filename}
     elif [[ ${filename} = *".tar.bz"* ]]; then
         tar jxvf ${filename}
         rm ${filename} --strip 1
     elif [[ ${filename} = *".tar.gz"* ]]; then
         tar zxvf ${filename} --strip 1
         rm ${filename}
+    elif [[ ${filename} = *"gz"* ]]; then
+        gunzip ${filename}
     fi
 done
 
@@ -60,12 +60,12 @@ sentiment_char_mapping=$PWD/$data_path"char_mapping"
 sentiment_word_mapping=$PWD/$data_path"word_mapping"
 lm_mapping=$PWD/$data_path"words_char.json"
 ln -s $dict_fasttext coh1/;
-ln -s $coh1_source_mapping coh1/corpus/;
-ln -s $coh1_target_mapping coh1/corpus/;
-ln -s $fasttext_npy coh1/corpus/;
+ln -s $coh1_source_mapping coh1/data/;
+ln -s $coh1_target_mapping coh1/data/;
+ln -s $fasttext_npy coh1/data/;
 ln -s $dict_fasttext coh2/data/;
 ln -s $fasttext_model coh2/data/;
 ln -s $dict_fasttext LM/data/;
 ln -s $lm_mapping LM/data/;
-ln -s $sentiment_char_mapping sentiment_analysis/corpus/;
-ln -s $sentiment_word_mapping sentiment_analysis/corpus/;
+ln -s $sentiment_char_mapping sentiment_analysis/data/;
+ln -s $sentiment_word_mapping sentiment_analysis/data/;

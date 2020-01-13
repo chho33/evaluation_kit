@@ -4,3 +4,4 @@ numpy
 pandas
 fasttext
 jieba_fast
+opencc-python-reimplemented
