@@ -53,7 +53,6 @@ gunzip $filename
 data_path="data/"
 fasttext_model=$PWD/$data_path"cc.zh.300.bin"
 dict_fasttext=$PWD/$data_path"dict_fasttext.txt"
-test_raw=$PWD/$data_path"test_raw.csv"
 coh1_source_mapping=$PWD/$data_path"source.150000.mapping"
 coh1_target_mapping=$PWD/$data_path"target.6185.mapping"
 fasttext_npy=$PWD/$data_path"fasttext.npy"
@@ -61,16 +60,12 @@ sentiment_char_mapping=$PWD/$data_path"char_mapping"
 sentiment_word_mapping=$PWD/$data_path"word_mapping"
 lm_mapping=$PWD/$data_path"words_char.json"
 ln -s $dict_fasttext coh1/;
-ln -s $test_raw coh1/corpus/;
 ln -s $coh1_source_mapping coh1/corpus/;
 ln -s $coh1_target_mapping coh1/corpus/;
 ln -s $fasttext_npy coh1/corpus/;
 ln -s $dict_fasttext coh2/data/;
 ln -s $fasttext_model coh2/data/;
-ln -s $test_raw coh2/data/;
 ln -s $dict_fasttext LM/data/;
-ln -s $test_raw LM/data/;
 ln -s $lm_mapping LM/data/;
-ln -s $test_raw sentiment_analysis/corpus/;
 ln -s $sentiment_char_mapping sentiment_analysis/corpus/;
 ln -s $sentiment_word_mapping sentiment_analysis/corpus/;

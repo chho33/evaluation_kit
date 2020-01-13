@@ -51,6 +51,12 @@ sent_model_path=$model_base_path/sentiment_analysis/Model07
 sent_char_mapping=$PWD/data/"char_mapping"
 sent_word_mapping=$PWD/data/"word_mapping"
 
+# link data_path to each dir
+ln -s $PWD/$data_path coh1/corpus/;
+ln -s $PWD/$data_path coh2/data/;
+ln -s $PWD/$data_path LM/data/;
+ln -s $PWD/$data_path sentiment_analysis/corpus/;
+
 # get LM score
 cd LM; python infer_scores.py --inference_data_path=$data_path --log_path=$log_path --model_dir=$lm_model_path; cd ..
 # get sentiment score
