@@ -2,7 +2,7 @@
 - python version: 3.6 up
 - execute `pip install -r requirements.txt`
 
-- there are 3 files exceed 100MB that googledrive won't allow to download directly; Please download these three files and put them into correct directory manually:
+- Please download the following files and put them into correct directory manually:
 > [coh1 model](https://drive.google.com/open?id=1FkVBItYo4ra9B-yF76o3h3WCQ9lLSs7p) 
 ```
 mv coh1.tar.gz evaluation_kit/saved_models/coh1/;
