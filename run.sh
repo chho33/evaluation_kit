@@ -39,7 +39,7 @@ if [ -n "$DATA" ]; then
 fi
 
 if [ -n "$LOG" ]; then
-    log_path=$LOG
+    log_path=$PWD/$LOG
 fi
 
 model_base_path=$PWD/saved_models
