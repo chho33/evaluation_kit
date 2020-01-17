@@ -5,7 +5,7 @@ import os
 from flags import FLAGS, MAX_LEN
 from model import Model
 from utils import data_loader 
-from fastText import load_model
+from fasttext import load_model
 fasttext_model = load_model("data/cc.zh.300.bin")
 
 def get_data(data):
@@ -24,10 +24,6 @@ def train_step(sess, model, data, train_op,\
     batch_context, batch_context_len = get_data(batch_context) 
     batch_utterance, batch_utterance_len = get_data(batch_utterance)
     batch_labels = batch_labels.reshape(-1,1)
-    #print('batch_context: ',len(batch_context),len(batch_context[0]))
-    #print('batch_utterance: ',len(batch_utterance),len(batch_utterance[0]))
-    #print('batch_labels: ',len(batch_labels),len(batch_labels[0]))
-    #print('=====================')
     feed_dict = {model.context_embedded: batch_context,
                  model.utterance_embedded: batch_utterance, 
                  model.context_len: batch_context_len, 

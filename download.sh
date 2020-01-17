@@ -9,6 +9,7 @@ coh1_source_mapping=$data_path"source.150000.mapping","1I1SiWYmtvSQSmI-JiXoqcb1a
 coh1_target_mapping=$data_path"target.6185.mapping","16Q-GAJ-JwZRLJKZiWKbgcVvcaLJH8p3Z"
 fasttext_npy=$data_path"fasttext.npy.zip","1p3ZpcBeZcpIjMmbx3aD0QWEks-TtrPSP"
 dict_fasttext=$data_path"dict_fasttext.txt.gz","1jk6pjs535ujn4SQkK5GTwy_LWaLbyMto"
+coh2_vocabulay=$data_path"vocabulary.txt.gz","1uGl21-EZvBzzvSXQUGe_poc3pTK9pnxY"
 sentiment_char_mapping=$data_path"char_mapping","1CenvR6GH8qaSn2evOA3_T6rSn0EUDfUN"
 sentiment_word_mapping=$data_path"word_mapping","1lqdsfeBRgc4YHO3go4txu9OKXa7cvjBh"
 lm_mapping=$data_path"words_char.json.gz","1iMD5KAgH4Ro8JqLo_V3XCGLGwz9nsTaw"
@@ -22,7 +23,7 @@ sent_char_model=$model_path"sentiment_analysis/sentiment_char.tar.gz","112GPe7_t
 
 
 #files_arr=($coh1_source_mapping $coh1_target_mapping $fasttext_npy $dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh1_model $coh2_model $lm_model $sent_word_model $sent_char_model)
-files_arr=($coh1_source_mapping $coh1_target_mapping $dict_fasttext $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh2_model $sent_word_model $sent_char_model)
+files_arr=($coh1_source_mapping $coh1_target_mapping $dict_fasttext $coh2_vocabulay $sentiment_char_mapping $sentiment_word_mapping $lm_mapping $coh2_model $sent_word_model $sent_char_model)
 for f in ${files_arr[@]}; do
     IFS=',' read filename fileid <<< "${f}"
     download_url="https://drive.google.com/uc?id=${fileid}&export=download"
@@ -55,6 +56,7 @@ fasttext_model=$PWD/$data_path"cc.zh.300.bin"
 dict_fasttext=$PWD/$data_path"dict_fasttext.txt"
 coh1_source_mapping=$PWD/$data_path"source.150000.mapping"
 coh1_target_mapping=$PWD/$data_path"target.6185.mapping"
+coh2_vocabulay=$PWD/$data_path"vocabulary.txt"
 fasttext_npy=$PWD/$data_path"fasttext.npy"
 sentiment_char_mapping=$PWD/$data_path"char_mapping"
 sentiment_word_mapping=$PWD/$data_path"word_mapping"
@@ -65,6 +67,7 @@ ln -s $coh1_target_mapping coh1/data/;
 ln -s $fasttext_npy coh1/data/;
 ln -s $dict_fasttext coh2/data/;
 ln -s $fasttext_model coh2/data/;
+ln -s $coh2_vocabulay coh2/data/;
 ln -s $dict_fasttext LM/data/;
 ln -s $lm_mapping LM/data/;
 ln -s $sentiment_char_mapping sentiment_analysis/data/;

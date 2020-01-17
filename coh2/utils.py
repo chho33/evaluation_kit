@@ -8,7 +8,6 @@ import os
 import re
 import csv
 from collections import namedtuple, defaultdict
-from fastText import load_model 
 
 SPECIAL_TAGS_COUNT = 2
 
